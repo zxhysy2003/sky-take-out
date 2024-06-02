@@ -9,6 +9,14 @@
         values
             (#{name},#{categoryId},#{price},#{image},#{description},#{createTime},#{updateTime},#{createUser},#{updateUser},#{status})
     </insert>
+
+    <delete id="deleteByIds">
+        delete from dish where id in 
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
     <select id="pageQuery" resultType="com.sky.vo.DishVO">
         select d.* , c.name as categoryName from dish d left outer join category c on d.category_id = c.id
         <where>
@@ -23,6 +31,14 @@
             </if>
         </where>
         order by d.create_time desc
+    </select>
+    
+    <select id="getStatusByIds" resultType="java.lang.Long">
+        select status from dish where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+        and status = 1
     </select>
 
 
