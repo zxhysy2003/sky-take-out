@@ -18,6 +18,7 @@ import com.sky.vo.SetmealVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -101,5 +102,48 @@ public class SetmealServiceImpl implements SetmealService {
         setmealMapper.deleteByIds(ids);
     }
 
+    /**
+     * 根据id查询套餐和关联的菜品数据
+     * @param id
+     * @return
+     */
+    @Override
+    public SetmealVO getByIdWithDish(Long id) {
+        Setmeal setmeal = setmealMapper.getById(id);
+        List<SetmealDish> setmealDishes = setmealDishMapper.getBySetmealId(id);
 
+        SetmealVO setmealVO = new SetmealVO();
+        BeanUtils.copyProperties(setmeal, setmealVO);
+        setmealVO.setSetmealDishes(setmealDishes);
+
+        return setmealVO;
+    }
+
+    /**
+     * 修改套餐
+     * @param setmealDTO
+     */
+    @Override
+    @Transactional
+    public void update(SetmealDTO setmealDTO) {
+        Setmeal setmeal = new Setmeal();
+        BeanUtils.copyProperties(setmealDTO, setmeal);
+
+        //修改套餐表
+        setmealMapper.update(setmeal);
+
+        Long setmealId = setmealDTO.getId();
+
+        //删除套餐原有与菜品的关联联系
+        setmealDishMapper.deleteBySetmealId(setmealId);
+
+        //将菜品与套餐联系起来，设置setmealId
+        List<SetmealDish> setmealDishes = setmealDTO.getSetmealDishes();
+        setmealDishes.forEach(setmealDish -> {
+            setmealDish.setSetmealId(setmealId);
+        });
+
+        //重新插入套餐与菜品的关联关系
+        setmealDishMapper.insertBatch(setmealDishes);
+    }
 }
