@@ -39,6 +39,13 @@
         where id = #{id}
     </update>
 
+    <delete id="deleteByIds">
+        delete from setmeal where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
     <select id="pageQuery" resultType="com.sky.vo.SetmealVO">
         select
             s.*,c.name categoryName
@@ -60,6 +67,13 @@
             </if>
         </where>
         order by s.create_time desc
+    </select>
+
+    <select id="getByIds" resultType="com.sky.entity.Setmeal">
+        select * from setmeal where id in 
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
     </select>
 
 </mapper>
