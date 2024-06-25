@@ -12,3 +12,9 @@ sky:
     access-key-id: LTAI5tCyxKqUvTMoacpj1VeD
     access-key-secret: MNSulk7JRkdFJCwa2EJGz0WlLItTSQ
     bucket-name: sky-sy
+
+  redis:
+    host: localhost
+    port: 6379
+    password: 123456
+    database: 10

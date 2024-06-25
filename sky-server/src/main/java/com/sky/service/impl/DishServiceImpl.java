@@ -147,10 +147,11 @@ public class DishServiceImpl implements DishService {
     }
 
     /**
-     * 修改id修改菜品基本信息和对应的口味信息
+     * 修改菜品基本信息和对应的口味信息
      * @param dishDTO
      */
     @Override
+    @Transactional
     public void updateWithFlavor(DishDTO dishDTO) {
         Dish dish = new Dish();
         BeanUtils.copyProperties(dishDTO, dish);
@@ -178,6 +179,7 @@ public class DishServiceImpl implements DishService {
      * @param id
      */
     @Override
+    @Transactional
     public void startOrStop(Integer status, Long id) {
         Dish dish = Dish.builder()
                 .status(status)
