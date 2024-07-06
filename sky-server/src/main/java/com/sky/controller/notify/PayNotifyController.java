@@ -58,7 +58,7 @@ public class PayNotifyController {
      * @return
      * @throws Exception
      */
-    public String readData(HttpServletRequest request) throws Exception {
+    private String readData(HttpServletRequest request) throws Exception {
         BufferedReader reader = request.getReader();
         StringBuilder result = new StringBuilder();
         String line = null;

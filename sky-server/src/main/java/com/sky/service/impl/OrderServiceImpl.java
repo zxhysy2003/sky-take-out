@@ -45,6 +45,7 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private WeChatPayUtil weChatPayUtil;
 
+    private Orders orders;
 
     /**
      * 用户下单
@@ -85,6 +86,7 @@ public class OrderServiceImpl implements OrderService {
         order.setPayStatus(Orders.UN_PAID);
         order.setOrderTime(LocalDateTime.now());
 
+        this.orders = order;
         //向订单插入1条数据
         orderMapper.insert(order);
 
@@ -129,7 +131,7 @@ public class OrderServiceImpl implements OrderService {
         Long userId = BaseContext.getCurrentId();
         User user = userMapper.getById(userId);
 
-        JSONObject jsonObject = weChatPayUtil.pay(
+        /*JSONObject jsonObject = weChatPayUtil.pay(
                 ordersPaymentDTO.getOrderNumber(),
                 new BigDecimal(0.01),
                 "苍穹外卖订单",
@@ -138,11 +140,16 @@ public class OrderServiceImpl implements OrderService {
 
         if(jsonObject.getString("code") != null && jsonObject.getString("code").equals("ORDERPAID")) {
             throw new OrderBusinessException("该订单已支付");
-        }
+        }*/
 
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code","ORDERPAID");
         OrderPaymentVO vo = jsonObject.toJavaObject(OrderPaymentVO.class);
         vo.setPackageStr(jsonObject.getString("package"));
-
+        Integer OrderStatus = Orders.TO_BE_CONFIRMED;
+        Integer OrderPaidStatus = Orders.PAID;
+        LocalDateTime check_out_time = LocalDateTime.now();
+        orderMapper.updateStatus(OrderStatus,OrderPaidStatus,check_out_time,this.orders.getId());
         return vo;
     }
 
