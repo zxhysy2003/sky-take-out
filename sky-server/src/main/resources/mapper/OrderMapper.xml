@@ -96,7 +96,7 @@
     </select>
 
     <select id="getSalesTop10" resultType="com.sky.dto.GoodsSalesDTO">
-        select od.name as name,sum(od.number) as total_number
+        select od.name as name,sum(od.number) as number
         from order_detail od,orders o
         where od.order_id = o.id and o.status = 5
         <if test="begin != null">
@@ -106,7 +106,7 @@
             and order_time &lt;= #{end}
         </if>
         group by name
-        order by total_number desc
+        order by number desc
         limit 0,10
     </select>
 
